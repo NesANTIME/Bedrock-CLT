@@ -1,8 +1,0 @@
-{
-    "1.6": {
-        "bedrock-clt.py": ["..", "..", "bedrock-clt.py"],
-        "update.json": ["update.json"],
-        "protocol_stop_server.json": ["protocol_stop_server.json"],
-        "players_connect.json": ["players_connect.json"]
-    }
-}
