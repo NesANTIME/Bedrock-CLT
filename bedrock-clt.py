@@ -26,6 +26,10 @@ def load_protocolStopServer():
 def load_commands():
     with open("bedrock_clt/commands/commands.json", "r", encoding="utf-8") as archivo:
         return json.load(archivo)
+    
+def load_commands_functions():
+    with open("bedrock_clt/commands/functions.json", "r", encoding="utf-8") as archivo:
+        return json.load(archivo)
 
 
     
@@ -90,20 +94,26 @@ def enviar(cmd):
 
 
 
-
-
-
 config = load_config()
 commands_for_user = load_commands()
+commands_functions_for_user = load_commands_functions()
+
 if (config["VersionSO"] == 0):
     subprocess.run("bash -c 'ulimit -n 1048576 && ulimit -u unlimited'", shell=True)
     execute = ["taskset", "-c", "0-3", "nice", "-n", "-20", "./bedrock_server"]
+    bedrock_server = subprocess.Popen(execute, cwd=".", stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        bufsize=1, universal_newlines=True)
+
     print(f"{Fore.GREEN}[B-CLT]{Style.DIM} INICIADO CORRECTAMENTE {Style.RESET_ALL}")
 
 elif (config["VersionSO"] == 1):
     execute = "bedrock_server.exe"
     if ("ruta_raiz" in config):
         execute = f"{config["ruta_raiz"]}/{execute}"
+
+    bedrock_server = subprocess.Popen(execute, cwd=os.path.dirname(execute), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, 
+        bufsize=1, universal_newlines=True)
+    
     print(f"{Fore.GREEN}[B-CLT]{Style.DIM} INICIADO CORRECTAMENTE {Style.RESET_ALL}")
 
 else:
@@ -111,12 +121,11 @@ else:
     sys.exit(1)
     
 
-bedrock_server = subprocess.Popen(execute, cwd=os.path.dirname(execute), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, 
-        bufsize=1, universal_newlines=True)
+
+
+
 
 threading.Thread(target=leer_logs, daemon=True).start()
-
-
 # ----------------- INTERFAZ -----------------
 try:
     print(Fore.CYAN + Style.BRIGHT + "\n[✔] Servidor BDS iniciado correctamente.")

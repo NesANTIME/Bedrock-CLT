@@ -46,7 +46,7 @@ Herramienta `desarrollada en python` en línea de comandos, diseñada para dar u
 ---
 ## ⚙️ Configuracion
 La Configuracion Inicial se encuentra en el siguiente enlace:
-[Configuracion](Configuracion.md).
+[Configuracion](https://nesantimeproyect.netlify.app/proyectos/v/bedrock-clt/documentacion).
 
 ---
 ## 📄 Licencia
