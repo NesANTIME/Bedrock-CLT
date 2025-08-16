@@ -2,8 +2,10 @@ import os
 import sys
 import json
 import time
+import argparse
 import threading
 import subprocess
+import webbrowser
 from colorama import init, Fore, Style
 init(autoreset=True)
 
@@ -30,6 +32,16 @@ def load_commands():
 def load_commands_functions():
     with open("bedrock_clt/commands/functions.json", "r", encoding="utf-8") as archivo:
         return json.load(archivo)
+    
+def load_info_version():
+    with open("bedrock_clt/modules/version.json", "r", encoding="utf-8") as archivo:
+        return json.load(archivo)
+    
+def enviar(cmd):
+    bedrock_server.stdin.write(cmd + "\n")
+    bedrock_server.stdin.flush()
+    
+
 
 
     
@@ -46,21 +58,18 @@ def connected_and_disconnected(jugador, mode):
 
     else:
         comandos = load_protocolStopServer()
+        message = comandos.get("mensaje_stop_server", "El servidor se ha Apagado, Por favor vuelve más tarde.")
         for i in comandos["protocol_stop_server"]:
             enviar(i)
             time.sleep(1)
 
         for player in list_players["players_online"]:
-            enviar("kick "+ player + " El servidor se ha Apagado, Por favor vuelve más tarde.")
+            enviar(f"kick {player} {message}")
             time.sleep(1)
             
         list_players["players_online"].clear()
 
     save_playersConnect(list_players)
-
-
-
-
 
 
 def leer_logs():
@@ -83,12 +92,6 @@ def leer_logs():
         print("> ", end="", flush=True)
 
 
-def enviar(cmd):
-    bedrock_server.stdin.write(cmd + "\n")
-    bedrock_server.stdin.flush()
-
-
-
 
 
 
@@ -96,33 +99,54 @@ def enviar(cmd):
 
 config = load_config()
 commands_for_user = load_commands()
+functions_for_user = load_commands_functions()
 commands_functions_for_user = load_commands_functions()
 
-if (config["VersionSO"] == 0):
-    subprocess.run("bash -c 'ulimit -n 1048576 && ulimit -u unlimited'", shell=True)
-    execute = ["taskset", "-c", "0-3", "nice", "-n", "-20", "./bedrock_server"]
-    bedrock_server = subprocess.Popen(execute, cwd=".", stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-        bufsize=1, universal_newlines=True)
+parser = argparse.ArgumentParser(description="Bedrock-CLT Launcher")
+parser.add_argument("--version", action="store_true", help="Mostrar información de la versión")
+parser.add_argument("--help_web", action="store_true", help="Abrir la página web de Bedrock-CLT")
+parser.add_argument("--start", action="store_true", help="Iniciar Bedrock Server")
+args = parser.parse_args()
 
-    print(f"{Fore.GREEN}[B-CLT]{Style.DIM} INICIADO CORRECTAMENTE {Style.RESET_ALL}")
+if args.version:
+    info_version = load_info_version()
+    print(f"{Fore.BLUE}Bedrock-CLT -- [B-CLT]{Fore.RESET}")
+    for x in info_version:
+        print(f"   {Style.BRIGHT + x} : {Style.NORMAL + info_version[x]}")
+    sys.exit(0)
 
-elif (config["VersionSO"] == 1):
-    execute = "bedrock_server.exe"
-    if ("ruta_raiz" in config):
-        execute = f"{config["ruta_raiz"]}/{execute}"
+elif args.help_web:
+    print("Abriendo la página web de Bedrock-CLT...")
+    webbrowser.open("https://nesantimeproyect.netlify.app/proyectos/v/bedrock-clt/documentacion")
+    sys.exit(0)
 
-    bedrock_server = subprocess.Popen(execute, cwd=os.path.dirname(execute), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, 
-        bufsize=1, universal_newlines=True)
-    
-    print(f"{Fore.GREEN}[B-CLT]{Style.DIM} INICIADO CORRECTAMENTE {Style.RESET_ALL}")
+elif args.start or not any([args.version, args.help_web, args.start]):
+    if (config["VersionSO"] == 0):
+        subprocess.run("bash -c 'ulimit -n 1048576 && ulimit -u unlimited'", shell=True)
+        execute = ["taskset", "-c", "0-3", "nice", "-n", "-20", "./bedrock_server"]
+        bedrock_server = subprocess.Popen(execute, cwd=".", stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            bufsize=1, universal_newlines=True)
+
+        print(f"{Fore.GREEN}[B-CLT]{Style.DIM} INICIADO CORRECTAMENTE {Style.RESET_ALL}")
+
+    elif (config["VersionSO"] == 1):
+        execute = "bedrock_server.exe"
+        if ("ruta_raiz" in config):
+            execute = f"{config["ruta_raiz"]}/{execute}"
+
+        bedrock_server = subprocess.Popen(execute, cwd=os.path.dirname(execute), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, 
+            bufsize=1, universal_newlines=True)
+        
+        print(f"{Fore.GREEN}[B-CLT]{Style.DIM} INICIADO CORRECTAMENTE {Style.RESET_ALL}")
+
+    else:
+        print(f"{Fore.RED}[B-CLT [ERROR]]{Style.DIM} Configuracion en config.json Erronea {Style.RESET_ALL}")
+        sys.exit(1)
 
 else:
-    print(f"{Fore.RED}[B-CLT [ERROR]]{Style.DIM} Configuracion en config.json Erronea {Style.RESET_ALL}")
+    print(f"{Fore.RED}[B-CLT [ERROR]]{Style.DIM} Argumento no reconocido: {args.variable_argumento} {Style.RESET_ALL}")
     sys.exit(1)
     
-
-
-
 
 
 threading.Thread(target=leer_logs, daemon=True).start()
@@ -145,6 +169,20 @@ try:
                 print(f"[X] Comando desconocido: {cmd}")
                 continue
 
+        if cmd.startswith("!"):
+            if cmd in functions_for_user:
+                print(f"{Fore.BLUE + Style.BRIGHT}[B-CLT] {Style.NORMAL}Comando-Funcion Iniciado: {Style.RESET_ALL}")
+                for x in functions_for_user[cmd]:
+                    if (x == int):
+                        time.sleep(x)
+                        continue
+                    print(f"{Fore.BLUE}    [B-CLT] {Style.NORMAL}Comando-Funcion [{cmd}]: {Style.RESET_ALL} {x}")
+                    enviar(x)
+                continue
+            else:
+                print(f"[X] Comando desconocido: {cmd}")
+                continue
+
         if cmd.lower() == "stop":
             print(f"\n{Fore.BLUE}[B-CLT {Fore.YELLOW}[INFO]{Fore.BLUE}]{Fore.YELLOW} Iniciando apagado del servidor...{Style.RESET_ALL}\n")
             time.sleep(0.3)
@@ -158,7 +196,7 @@ try:
             break
 
         else:
-            print(f"{Fore.BLUE}[B-CLT] {Style.DIM}Comando Enviado: {Style.RESET_ALL}{cmd}")
+            print(f"{Fore.BLUE}[B-CLT] {Style.DIM}Comando: {Style.RESET_ALL}{cmd}")
             enviar(cmd)
 
 except KeyboardInterrupt:

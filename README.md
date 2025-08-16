@@ -1,4 +1,4 @@
-![Texto alternativo](recursos/Banner_Bedrock-CLT.png)
+![Texto alternativo](.recursos/Banner_Bedrock-CLT.png)
 
 # Bedrock-CLT
 

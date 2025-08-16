@@ -1,7 +1,12 @@
 {
-    "protocol_stop_server": ["say AVISO: El Servidor se apagara en 5 segundos",
-    "say AVISO: El Servidor se apagara en 4 segundos",
-    "say AVISO: El Servidor se apagara en 3 segundos",
-    "say AVISO: El Servidor se apagara en 2 segundos",
-    "say AVISO: El Servidor se apagara en 1 segundos"]
+    "protocol_stop_server": [
+        "say AVISO: El Servidor se apagara en 5 segundos",
+        "say AVISO: El Servidor se apagara en 4 segundos",
+        "say AVISO: El Servidor se apagara en 3 segundos",
+        "say AVISO: El Servidor se apagara en 2 segundos",
+        "say AVISO: El Servidor se apagara en 1 segundos"
+    ],
+
+    "mensaje_stop_server": "El servidor se ha Apagado, Por favor vuelve más tarde."
+    
 }

@@ -1,0 +1,7 @@
+{
+    "!ejemplo": [
+        "say Este es un comando de ejemplo", 5,
+        "say Puedes crear tus propios comandos personalizados", 
+        "say Usa !comando para ejecutarlo"
+    ]
+}
