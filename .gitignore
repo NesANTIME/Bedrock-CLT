@@ -1,0 +1,17 @@
+# Entornos virtuales
+venv/
+.vevn/
+.env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Cache en subdirectorios
+bedrock_clt/**/__pycache__/
+bedrock_clt/**/**/*.pyc
+
+.devcontainer/**/
+.devcontainer
