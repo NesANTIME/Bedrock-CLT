@@ -30,7 +30,7 @@ def check_files_and_folders_BDS(ruta):
             time.sleep(0.3) 
             bar()
 
-    print(f"\n{' '*2}[+] Verificación finalizada.")
+    print(f"\n{' '*2}[+] Verificación finalizada.\n")
     return exists
 
 

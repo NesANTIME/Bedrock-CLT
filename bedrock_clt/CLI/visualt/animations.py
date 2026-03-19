@@ -13,6 +13,6 @@ def logo():
     for i in lista_logotipos.get(logo_aleatorio):
         print(f"{Style.BRIGHT}{i}")
     
-    print(f"{Style.DIM}by Nesantime {Style.NORMAL}---{Style.DIM} V{get_content("version")}{Style.RESET_ALL}")
+    print(f"{' '*20}{Style.DIM}by Nesantime {Style.NORMAL}---{Style.DIM} Version: {get_content("version")}{Style.RESET_ALL}")
 
 

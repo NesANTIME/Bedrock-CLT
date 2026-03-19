@@ -25,7 +25,9 @@
         "connection_service_B-CTL": "",
 
         "standar_controller_files_linux": {
-            "file_for_user": "~/.local/share/B-CLT/.for_user"
+            "directorio_programa_principal": "/usr/local/lib/bedrock-clt",
+            "directorio_archivo_configuracion": "/etc/bedrock-clt/",
+            "directorio_lanzador": "/usr/local/sbin/"
         }
     },
 
