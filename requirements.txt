@@ -1,3 +1,4 @@
+alive-progress
 colorama
 requests
 prompt_toolkit

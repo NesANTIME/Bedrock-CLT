@@ -14,3 +14,5 @@ def logo():
         print(f"{Style.BRIGHT}{i}")
     
     print(f"{Style.DIM}by Nesantime {Style.NORMAL}---{Style.DIM} V{get_content("version")}{Style.RESET_ALL}")
+
+

@@ -3,45 +3,48 @@ import shutil
 from pathlib import Path
 
 from prompt_toolkit import Application
-from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.styles import Style
 from prompt_toolkit.layout import Layout
+from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.layout.containers import HSplit, Window
 from prompt_toolkit.layout.controls import FormattedTextControl
-from prompt_toolkit.styles import Style
 
 
+
+# Paleta de colores y estilos ~~~
 STYLE = Style.from_dict({
-    "frame":            "#2d3748",
-    "frame.top":        "bg:#0d1117 #f0a500 bold",
-    "frame.bottom":     "bg:#0d1117 #3d4f61",
+    # Estructura ~~
+    "frame":            "#2d3748",                # bordes del marco
+    "frame.top":        "bg:#0d1117 #f0a500 bold",  # título superior
+    "frame.bottom":     "bg:#0d1117 #3d4f61",       # barra inferior
 
-    # ── Header / breadcrumb ─────────────────────────────────────────────────
+    # Header ~~
     "bc.root":          "bg:#0d1117 #4a90d9",
     "bc.sep":           "bg:#0d1117 #2d3748",
     "bc.part":          "bg:#0d1117 #8ab4c9",
     "bc.current":       "bg:#0d1117 #e2e8f0 bold",
 
-    # ── Lista – item normal ─────────────────────────────────────────────────
-    "item.pre":         "bg:#0d1117 #2d3748",   
-    "item.icon":        "bg:#0d1117 #4a90d9",   
-    "item.name":        "bg:#0d1117 #8ab4c9",    
-    "item.pad":         "bg:#0d1117 #0d1117",  
+    # Lista sin seleccion ~~
+    "item.pre":         "bg:#0d1117 #2d3748",       # gutter izquierdo
+    "item.icon":        "bg:#0d1117 #4a90d9",       # icono carpeta
+    "item.name":        "bg:#0d1117 #8ab4c9",       # nombre
+    "item.pad":         "bg:#0d1117 #0d1117",       # relleno hasta scrollbar
 
-    # ── Lista – item seleccionado ───────────────────────────────────────────
+    # Lista seleccionado ~~
     "sel.pre":          "bg:#1a2535 #f0a500 bold",
     "sel.icon":         "bg:#1a2535 #f0a500",
     "sel.name":         "bg:#1a2535 #ffffff bold",
     "sel.pad":          "bg:#1a2535 #1a2535",
 
-    # ── Lista – item denegado ───────────────────────────────────────────────
+    # Lista item denegado ~~
     "deny.icon":        "bg:#0d1117 #3d4f61",
     "deny.name":        "bg:#0d1117 #3d4f61 italic",
 
-    # ── Scrollbar ───────────────────────────────────────────────────────────
+    # Scrollbar ~~
     "scroll.track":     "bg:#0d1117 #1e2d3d",
     "scroll.thumb":     "bg:#0d1117 #f0a500",
 
-    # ── Footer ──────────────────────────────────────────────────────────────
+    # Footer ~~
     "ft.key":           "bg:#0d1117 #f0a500 bold",
     "ft.label":         "bg:#0d1117 #4a6070",
     "ft.sep":           "bg:#0d1117 #1e2d3d",
@@ -51,6 +54,7 @@ STYLE = Style.from_dict({
 
 
 
+#  Helpers de terminal ~~~
 def _tsize() -> tuple[int, int]:
     s = shutil.get_terminal_size(fallback=(80, 24))
     return s.columns, s.lines
@@ -60,8 +64,7 @@ def _max_visible(rows: int) -> int:
 
 
 
-#  Filesystem
-# ─────────────────────────────────────────────────────────────────────────────
+#  Filesystem ~~~
 def _listar(ruta: Path) -> list:
     items = []
     try:
@@ -74,8 +77,8 @@ def _listar(ruta: Path) -> list:
     return sorted(items, key=lambda t: (not t[1], t[0].name.lower()))
 
 
-#  Scrollbar ASCII
-# ─────────────────────────────────────────────────────────────────────────────
+
+#  Scrollbar ASCII ~~~
 def _scrollbar(total: int, offset: int, visible: int) -> list[str]:
     if total <= visible:
         return ["░"] * visible
@@ -90,13 +93,13 @@ def _scrollbar(total: int, offset: int, visible: int) -> list[str]:
     return bar
 
 
-#  Breadcrumb
-# ─────────────────────────────────────────────────────────────────────────────
-def _breadcrumb(ruta: Path, cols: int) -> list:
-    partes = list(ruta.parts)   
-    tokens = []
 
+#  Breadcrumb ~~~
+def _breadcrumb(ruta: Path, cols: int) -> list:
+    partes = list(ruta.parts)
+    tokens = []
     full = []
+
     for i, p in enumerate(partes):
         es_raiz = (p == "/")
         es_ultimo = (i == len(partes) - 1)
@@ -110,10 +113,9 @@ def _breadcrumb(ruta: Path, cols: int) -> list:
                 ("class:bc.sep", "❯"),
             ]
 
-    # Si es demasiado largo, colapsar con …
+
     raw_len = sum(len(t[1]) for t in full)
     if raw_len > cols - 6:
-        # Solo mostrar los 2 últimos niveles
         short = partes[-2:] if len(partes) >= 2 else partes
         tokens = [("class:bc.sep", " … ❯")]
         for i, p in enumerate(short):
@@ -130,9 +132,9 @@ def _breadcrumb(ruta: Path, cols: int) -> list:
 
     return tokens
 
-# ─────────────────────────────────────────────────────────────────────────────
-#  Renderizadores de secciones
-# ─────────────────────────────────────────────────────────────────────────────
+
+
+#  Renderizadores de secciones ~~~
 def _render_top(ruta: Path, cols: int) -> list:
     title = " BEDROCK-CLT  Navegador de Directorios "
     pad   = "═" * max(0, cols - len(title) - 2)
@@ -142,11 +144,9 @@ def _render_top(ruta: Path, cols: int) -> list:
         ("class:frame.top", pad),
         ("class:frame.top", "╗\n"),
     ]
-    # Fila breadcrumb
     tokens += [("class:frame",  "║")]
     tokens += _breadcrumb(ruta, cols - 2)
     tokens += [("class:frame",  "║\n")]
-    # Separador
     tokens += [
         ("class:frame", "╠"),
         ("class:frame", "═" * (cols - 2)),
@@ -155,11 +155,11 @@ def _render_top(ruta: Path, cols: int) -> list:
     return tokens
 
 
+
 def _render_lista(items, cursor, offset, visible, cols) -> list:
     tokens: list = []
     chunk  = items[offset : offset + visible]
     sbar   = _scrollbar(len(items), offset, visible)
-    # ancho disponible para nombre: cols - 2(gutter) - 2(icono+sp) - 1(scrollbar)
     name_w = cols - 6
 
     if not chunk:
@@ -209,7 +209,6 @@ def _render_footer(total: int, cursor: int, cols: int) -> list:
     def l(t): return [("class:ft.label", t)]
     sep = [("class:ft.sep", "  │  ")]
 
-    # lado izquierdo — atajos
     left = (
         k("↑↓") + l(" nav") + sep +
         k("⏎")  + l(" entrar") + sep +
@@ -217,9 +216,7 @@ def _render_footer(total: int, cursor: int, cols: int) -> list:
         k("SPC") + l(" confirmar") + sep +
         k("^C") + l(" salir")
     )
-    left_len = sum(len(t[1]) for t in left) + 2  # +2 por padding
-
-    # lado derecho — contador
+    left_len = sum(len(t[1]) for t in left) + 2 
     pos_str  = str(cursor + 1) if total > 0 else "0"
     cnt_str  = str(total)
     right_raw = f" {pos_str}/{cnt_str}  {total} items "
@@ -239,7 +236,9 @@ def _render_footer(total: int, cursor: int, cols: int) -> list:
     )
     return tokens
 
-# ─────────────────────────────────────────────────────────────────────────────
+
+
+
 #  Función principal
 # ─────────────────────────────────────────────────────────────────────────────
 def navegador_directorios(ruta_inicial="."):
@@ -347,18 +346,9 @@ def navegador_directorios(ruta_inicial="."):
         layout=layout,
         key_bindings=kb,
         style=STYLE,
-        full_screen=False,
+        full_screen=True, 
         mouse_support=False,
     )
 
     app.run()
     return resultado[0]
-
-
-# ── Entry point ───────────────────────────────────────────────────────────────
-if __name__ == "__main__":
-    ruta = navegador_directorios(".")
-    if ruta:
-        print(f"\n\033[32m✔\033[0m  {ruta}")
-    else:
-        print("\n\033[31m✖\033[0m  Cancelado.")

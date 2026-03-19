@@ -4,7 +4,10 @@ init(autoreset=True)
 
 # Categoria de mensajes en pantalla ~~~
 def print_error(message):
-    print(f"{' '*2}{Fore.RED}[⚠]{Fore.WHITE + Style.BRIGHT} Bedrock-CLT - Error:{Style.RESET_ALL} {message}")
+    print(f"{' '*2}{Fore.RED}[❌]{Fore.WHITE + Style.BRIGHT} Bedrock-CLT - Error:{Style.RESET_ALL} {message}")
+
+def print_alert(message):
+    print(f"{' '*2}{Fore.YELLOW + Style.DIM}[⚠]{Fore.WHITE + Style.BRIGHT} Bedrock-CLT - Alerta:{Style.RESET_ALL} {message}")
 
 def printt(message):
     print(f"{' '*2}{message}")

@@ -53,6 +53,10 @@ def get_content(delivery):
     elif (delivery == "logotipo"):
         return FILE_JSON.get("information").get("logos")
     
+    # Nombre del programa
+    elif (delivery == "name_program"):
+        return FILE_JSON.get("information").get("Program")
+    
     # Repository Oficial
     elif (delivery == "repository"):
         return FILE_JSON.get("information").get("Repository")
@@ -60,3 +64,12 @@ def get_content(delivery):
     # Perfil Creador
     elif (delivery == "github_autor"):
         return FILE_JSON.get("information").get("Developer")
+    
+    # Modulo check_BDS
+    elif (delivery == "resources_checkBDS"):
+        content = FILE_JSON.get("resources-modules").get("check_BDS")
+        return content.get("files", []), content.get("folders", [])
+    
+    # ruta de "for_user"
+    elif (delivery == "ruta_forUser"):
+        return FILE_JSON.get("ruts").get("standar_controller_files_linux").get("file_for_user")

@@ -22,6 +22,22 @@
     },
 
     "ruts": {
-        "connection_service_B-CTL": ""
+        "connection_service_B-CTL": "",
+
+        "standar_controller_files_linux": {
+            "file_for_user": "~/.local/share/B-CLT/.for_user"
+        }
+    },
+
+    "resources-modules": {
+        "check_BDS": {
+            "files": [
+                "bedrock_server.exe", "server.properties", "permissions.json", "allowlist.json"
+            ],
+
+            "folders": [
+                "worlds", "behavior_packs", "resource_packs", "definitions"
+            ]
+        }
     }
 }
