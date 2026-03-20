@@ -6,7 +6,7 @@ import requests
 from pathlib import Path
 from functools import lru_cache
 
-from visualt.prints import print_error
+from visualt.prints import exception_error
 
 
 @lru_cache(maxsize=1)
@@ -15,8 +15,7 @@ def load_fileController():
     ruta_at_config_file = Path(__file__).parent / "file_controller.json"
 
     if (not os.path.isfile(ruta_at_config_file)):
-        print_error("Archivos de configuracion faltantes o corruptos!") 
-        sys.exit(2)
+        exception_error("Archivos de configuracion faltantes!", 2)
 
     with open(ruta_at_config_file, "rb") as f:
         for bloque in iter(lambda: f.read(4096), b""):
@@ -28,13 +27,11 @@ def load_fileController():
         respuesta.raise_for_status()
         hash_sha256_content = respuesta.json()
     except Exception:
-        print_error("No se puedo obtener acceso a los archivos de configuracion remotos!")
-        sys.exit(1)
+        exception_error("No se puedo obtener acceso a los archivos de configuracion remotos!", 1)
 
 
     if (hash_sha256.hexdigest() != hash_sha256_content.get("file_controller_SHA256")):
-        print_error("Archivos de configuracion faltantes o corruptos!") 
-        sys.exit(2)
+        exception_error("Archivos de configuracion faltantes o corruptos!", 2)
 
     with open(ruta_at_config_file, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -72,4 +69,4 @@ def get_content(delivery):
     
     # ruta de "for_user"
     elif (delivery == "ruta_forUser"):
-        return FILE_JSON.get("ruts").get("standar_controller_files_linux").get("file_for_user")
+        return FILE_JSON.get("ruts").get("standar_controller_files_linux").get("directorio_archivo_configuracion")

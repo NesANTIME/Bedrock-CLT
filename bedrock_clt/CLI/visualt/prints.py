@@ -1,13 +1,28 @@
+import sys
+
 from colorama import Fore, Style, init
 init(autoreset=True)
 
 
-# Categoria de mensajes en pantalla ~~~
-def print_error(message):
-    print(f"{' '*2}{Fore.RED}[❌]{Fore.WHITE + Style.BRIGHT} Bedrock-CLT - Error:{Style.RESET_ALL} {message}")
+# Manejo de errores en B-CLT ~~~
+def exception_error(message, code):
+    print(f"{' '*2}{Fore.RED + Style.BRIGHT}[⚠]{Style.NORMAL} Bedrock-CLT - Error (EFx{code}): {Style.RESET_ALL}{message}")
+    sys.exit(int(code))
 
-def print_alert(message):
-    print(f"{' '*2}{Fore.YELLOW + Style.DIM}[⚠]{Fore.WHITE + Style.BRIGHT} Bedrock-CLT - Alerta:{Style.RESET_ALL} {message}")
+
+def exception_alert(message):
+    print(f"{' '*2}{Fore.YELLOW + Style.BRIGHT}[⚠]{Style.NORMAL} Bedrock-CLT - Alerta: {Style.RESET_ALL}{message}")
+
+
+# Funciones de Imprimida ~~~
+def print_title(title):
+    print(f"{' '*2}{Fore.YELLOW + Style.BRIGHT}[!]{Style.NORMAL} {title} {Style.BRIGHT}[!] {Style.RESET_ALL}")
+
+
+
+
+
+
 
 def printt(message):
     print(f"{' '*2}{message}")

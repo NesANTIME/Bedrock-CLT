@@ -1,5 +1,7 @@
 import os
+import re
 import time
+import subprocess
 from alive_progress import alive_bar
 from colorama import Fore, Style, init
 
@@ -15,9 +17,9 @@ def check_files_and_folders_BDS(ruta):
 
     exists = True
 
-    print(f"\n{' '*2}[i] Iniciando verificación en:\n{' '*4}{Style.DIM}{ruta}{Style.RESET_ALL}")
+    print(f"{' '*4}{Fore.GREEN}[i]{Style.RESET_ALL} Iniciando verificacion!{Style.RESET_ALL}")
 
-    with alive_bar(len(content_list), title='  Verificando integridad', bar='classic', spinner='classic') as bar:
+    with alive_bar(len(content_list), title=f'{' '*5}Verificando integridad', bar='classic', spinner='classic') as bar:
         for item in content_list:
             destino = os.path.join(ruta, item)
             
@@ -30,8 +32,45 @@ def check_files_and_folders_BDS(ruta):
             time.sleep(0.3) 
             bar()
 
-    print(f"\n{' '*2}[+] Verificación finalizada.\n")
+    print(f"{' '*4}{Fore.BLUE}[B-CLT]{Style.RESET_ALL} Verificacion finalizada.\n")
     return exists
+
+
+
+def return_version_for_BDS(ruta):
+    env = os.environ.copy()
+    env["LD_LIBRARY_PATH"] = "." 
+
+    executable_path = os.path.join(ruta, 'bedrock_server')
+
+    try:
+        process = subprocess.Popen(
+            [executable_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            env=env,
+            bufsize=1
+        )
+
+        version = False
+
+        for _ in range(20):
+            line = process.stdout.readline()
+            if not line:
+                break
+            
+            match = re.search(r"Version:\s+([0-9a-zA-Z\.-]+)", line)
+            if match:
+                version = match.group(1)
+                break
+        
+        process.terminate()
+        process.wait(timeout=2)
+        return version
+
+    except Exception as e:
+        return f"Error: {e}"
 
 
 
