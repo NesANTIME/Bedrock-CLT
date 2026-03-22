@@ -27,14 +27,15 @@
         "standar_controller_files_linux": {
             "directorio_programa_principal": "/usr/local/lib/bedrock-clt",
             "directorio_archivo_configuracion": "/etc/bedrock-clt/",
-            "directorio_lanzador": "/usr/local/sbin/"
+            "directorio_lanzador": "/usr/local/sbin/",
+            "cache": "/var/cache/bedrock-clt/"
         }
     },
 
     "resources-modules": {
         "check_BDS": {
             "files": [
-                "bedrock_server.exe", "server.properties", "permissions.json", "allowlist.json"
+                "bedrock_server", "server.properties", "permissions.json", "allowlist.json"
             ],
 
             "folders": [

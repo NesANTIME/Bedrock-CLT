@@ -25,9 +25,9 @@ def write_file_for_user(data):
             json.dump(data, f, indent=4, ensure_ascii=False)   
 
     except (FileNotFoundError, PermissionError, TypeError) as e:
-        exception_error(f"Error al escribir el archivo: {e}")
+        exception_error(f"Error al escribir el archivo: {e}", 2)
     except Exception as e:
-        exception_error(f"Error inesperado: {e}")
+        exception_error(f"Error inesperado: {e}", 2)
 
 
 

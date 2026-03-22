@@ -18,6 +18,9 @@ def exception_alert(message):
 def print_title(title):
     print(f"{' '*2}{Fore.YELLOW + Style.BRIGHT}[!]{Style.NORMAL} {title} {Style.BRIGHT}[!] {Style.RESET_ALL}")
 
+def print_information(message):
+    print(f"\n{Fore.BLUE + Style.BRIGHT}[INFO]{Style.RESET_ALL} {message}")
+
 
 
 

@@ -14,6 +14,7 @@ from config.load_config import get_content
 def check_files_and_folders_BDS(ruta):
     files, folders = get_content("resources_checkBDS")
     content_list = (files + folders)
+    content_not = []
 
     exists = True
 
@@ -25,6 +26,7 @@ def check_files_and_folders_BDS(ruta):
             
             if (not os.path.exists(destino)):
                 bar.text(f" Error: {item}")
+                content_not.append(item)
                 exists = False
             else:
                 bar.text(f" OK: {item}")
@@ -32,8 +34,9 @@ def check_files_and_folders_BDS(ruta):
             time.sleep(0.3) 
             bar()
 
+
     print(f"{' '*4}{Fore.BLUE}[B-CLT]{Style.RESET_ALL} Verificacion finalizada.\n")
-    return exists
+    return exists, content_not
 
 
 

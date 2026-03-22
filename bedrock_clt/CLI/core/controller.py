@@ -1,4 +1,5 @@
 import sys
+import time
 from colorama import Fore, Style, init
 
 init(autoreset=True)
@@ -27,11 +28,14 @@ def controller_Servers(accion):
                 break
 
             exception_alert("No se ha especificado la ruta")
+            time.sleep(3)
 
+        confirm, not_files = check_files_and_folders_BDS(ruta)
 
-        if (not check_files_and_folders_BDS(ruta)):
+        if (not confirm):
+            print(f"{' '*4}Recursos no encontrados: {not_files}")
             exception_error("El directorio seleccionado no cumple con los requisitos de un BDS.", 1)
-
+            
         version = return_version_for_BDS(ruta)
 
         connect_file_for_user( {'mode': 'create_bds', 'name': name_bds, 'version': version, 'ruta': ruta} )
