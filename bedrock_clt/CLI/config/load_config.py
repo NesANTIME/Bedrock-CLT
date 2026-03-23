@@ -129,3 +129,6 @@ def get_content(delivery):
     # Ruta de cache
     elif (delivery == "cache_file_githubuser_sha256"):
         return FILE_JSON.get("ruts").get("standar_controller_files_linux").get("cache")
+    
+    elif (delivery == "cache_BDS"):
+        return Path(__file__).parent.parent / "Dedicated_Server.txt"

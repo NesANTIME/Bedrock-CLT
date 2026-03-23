@@ -17,13 +17,13 @@ Cli_Parser.add_argument("--version", action="store_true", help="[!] Imprimir la 
 subparsers = Cli_Parser.add_subparsers(dest="comando_principal", help="[!] Comandos principales de Bedrock-CLT")
 
 #  Subcomando "spaces" ~~~
-parser_servers = subparsers.add_parser("spaces", help="Gestion de servidores")
+parser_servers = subparsers.add_parser("spaces", help="[!] Gestion de los espacios!")
 # Subcomando principal en "spaces" ~~~
 sub_servers = parser_servers.add_subparsers(dest="accionSpaces", required=True)
 # Create ~~~~
-parser_create = sub_servers.add_parser("create", help="[!] Crea un nuevo espacio para servidor")
+parser_create = sub_servers.add_parser("create", help="[!] Crea un nuevo espacio para servidor.")
 # List ~~~~
-parser_list = sub_servers.add_parser("list", help="Lista los servidores configurados")
+parser_list = sub_servers.add_parser("list", help="[!] Lista los espacios creados.")
 # Remove ~~~~
 parser_remove = sub_servers.add_parser("remove", help="Elimina un servidor")
 parser_remove.add_argument("id", type=int, help="ID del servidor a eliminar")

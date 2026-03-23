@@ -2,6 +2,7 @@ import os
 import re
 import time
 import subprocess
+from pathlib import Path
 from alive_progress import alive_bar
 from colorama import Fore, Style, init
 
@@ -36,7 +37,14 @@ def check_files_and_folders_BDS(ruta):
 
 
     print(f"{' '*4}{Fore.BLUE}[B-CLT]{Style.RESET_ALL} Verificacion finalizada.\n")
-    return exists, content_not
+
+    file_exists = Path(ruta) / "./b-clt" / ".connections_spaces"
+    if (os.path.isfile(file_exists)):
+        repeat = True
+    else:
+        repeat = False
+
+    return exists, content_not, repeat
 
 
 
@@ -70,10 +78,26 @@ def return_version_for_BDS(ruta):
         
         process.terminate()
         process.wait(timeout=2)
+
+        cache_BDS = get_content("cache_BDS")
+        if (os.path.isfile(cache_BDS)):
+            os.remove(cache_BDS)
+
+        del cache_BDS
         return version
 
     except Exception as e:
         return f"Error: {e}"
+    
+
+def enlace_spaces(ruta):
+    ruta = os.path.join(ruta, "./b-clt")
+    os.makedirs(ruta)
+
+    ruta_file = os.path.join(ruta, ".connections_spaces")
+    with open(ruta_file, "w", encoding="utf-8") as f:
+        f.write("Esta es la primera línea.\n")
+        
 
 
 

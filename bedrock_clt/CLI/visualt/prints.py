@@ -21,11 +21,5 @@ def print_title(title):
 def print_information(message):
     print(f"\n{Fore.BLUE + Style.BRIGHT}[INFO]{Style.RESET_ALL} {message}")
 
-
-
-
-
-
-
-def printt(message):
-    print(f"{' '*2}{message}")
+def print_normal(message):
+    print(f"{' '*2}• {Fore.BLUE}[B-CTL]{Style.RESET_ALL} {message}")
