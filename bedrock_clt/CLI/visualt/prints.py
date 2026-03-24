@@ -9,7 +9,6 @@ def exception_error(message, code):
     print(f"{' '*2}{Fore.RED + Style.BRIGHT}[⚠]{Style.NORMAL} Bedrock-CLT - Error (EFx{code}): {Style.RESET_ALL}{message}")
     sys.exit(int(code))
 
-
 def exception_alert(message):
     print(f"{' '*2}{Fore.YELLOW + Style.BRIGHT}[⚠]{Style.NORMAL} Bedrock-CLT - Alerta: {Style.RESET_ALL}{message}")
 

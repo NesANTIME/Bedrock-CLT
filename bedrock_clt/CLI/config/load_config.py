@@ -1,11 +1,9 @@
 import os
 import io
-import sys
 import json
 import hashlib
 import requests
 from pathlib import Path
-from functools import lru_cache
 
 from visualt.prints import exception_error, print_information
 
@@ -57,12 +55,12 @@ def aux_fileController__connectFileGithub():
 
 
 
-@lru_cache(maxsize=1)
+
 def load_fileController():
     NOT_USER = True 
     ruta_at_config_file = Path(__file__).parent / "file_controller.json"
 
-    if (not os.path.isfile(ruta_at_config_file)):
+    if (not ruta_at_config_file.is_file()):
         exception_error("Archivos de configuracion faltantes!", 2)
 
     with open(ruta_at_config_file, "r", encoding="utf-8") as f:
@@ -73,7 +71,7 @@ def load_fileController():
         code_Sha256_for_file = aux_fileController__extractSha256(content_file)
         ruta_at_cache_file = Path(os.getenv('XDG_CACHE_HOME', '~/.cache')).expanduser() / "bedrock-clt" / "0xB-CTL8654"
 
-        if (os.path.isfile(ruta_at_cache_file)):
+        if (ruta_at_cache_file.is_file()):
             content_json = aux_fileController__readFileBinary(ruta_at_cache_file)
         else:
             content_json = aux_fileController__connectFileGithub()
@@ -93,42 +91,42 @@ def load_fileController():
 
 
 
+class Return_Content_Config:
+    def __init__(self):
+        self._data_json = load_fileController()
+        
+        self.data_information = self._data_json.get("information")
+        self.data_ruts = self-self._data_json.get("ruts")
 
-def get_content(delivery):
-    FILE_JSON = load_fileController()
+    @property
+    def get_name(self):
+        return self.data_information.get("Program")
+    
+    @property
+    def get_version(self):
+        return self.data_information.get("Version")
+    
+    @property
+    def get_repository(self):
+        return self.data_information.get("Repository")
+    
+    @property
+    def get_author(self):
+        return self.data_information.get("Developer")
+    
+    @property
+    def return_list_logos(self):
+        return self.data_information.get("logos", {})
+    
 
-    # Version del programa
-    if (delivery == "version"):
-        return FILE_JSON.get("information").get("Version_Program")
+    def return_list_filesfolders(self):
+        content = self._data_json.get("resources-modules").get("check_BDS")
+        return (content.get("files", []) + content.get("folders", []))
     
-    # Lista de logos
-    elif (delivery == "logotipo"):
-        return FILE_JSON.get("information").get("logos")
+    @property
+    def get_ruts_configuracion(self):
+        return self.data_ruts.get("standar_controller_files_linux").get("directorio_archivo_configuracion")
     
-    # Nombre del programa
-    elif (delivery == "name_program"):
-        return FILE_JSON.get("information").get("Program")
-    
-    # Repository Oficial
-    elif (delivery == "repository"):
-        return FILE_JSON.get("information").get("Repository")
-    
-    # Perfil Creador
-    elif (delivery == "github_autor"):
-        return FILE_JSON.get("information").get("Developer")
-    
-    # Modulo check_BDS
-    elif (delivery == "resources_checkBDS"):
-        content = FILE_JSON.get("resources-modules").get("check_BDS")
-        return content.get("files", []), content.get("folders", [])
-    
-    # ruta de "for_user"
-    elif (delivery == "ruta_forUser"):
-        return FILE_JSON.get("ruts").get("standar_controller_files_linux").get("directorio_archivo_configuracion")
-    
-    # Ruta de cache
-    elif (delivery == "cache_file_githubuser_sha256"):
-        return FILE_JSON.get("ruts").get("standar_controller_files_linux").get("cache")
-    
-    elif (delivery == "cache_BDS"):
-        return Path(__file__).parent.parent / "Dedicated_Server.txt"
+    @property
+    def get_ruts_cache(self):
+        return self.data_ruts.get("standar_controller_files_linux").get("cache")
