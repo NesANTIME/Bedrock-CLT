@@ -10,9 +10,12 @@ init(autoreset=True)
 
 from config.load_config import Return_Content_Config
 
+LOAD_CONFIG = Return_Content_Config()
+
+
 
 def verificar_integridad_servidor_bds(ruta_bds):
-    content_list = Return_Content_Config.return_list_filesfolders()
+    content_list = LOAD_CONFIG.return_list_filesfolders()
     ruta_bds = Path(ruta_bds)
 
     print(f"{' '*4}{Fore.GREEN}[i]{Style.RESET_ALL} Iniciando verificacion!{Style.RESET_ALL}")
@@ -23,7 +26,7 @@ def verificar_integridad_servidor_bds(ruta_bds):
         for item in content_list:
             destino = ruta_bds / item
             
-            if (not destino.is_file()):
+            if (not destino.exists()):
                 bar.text(f" Error: {item}")
                 files_and_foldes_not_exist.append(item)
             else:
@@ -36,9 +39,15 @@ def verificar_integridad_servidor_bds(ruta_bds):
 
     print(f"{' '*4}{Fore.BLUE}[B-CLT]{Style.RESET_ALL} Verificacion finalizada.\n")
 
-    file_exists = ruta_bds / "./b-clt" / ".connections_spaces"
-    repeat = file_exists.is_file()
+    repeat = False
+    carpeta_exists = ruta_bds / ".b-clt"
+    file_exists = carpeta_exists / ".connections_spaces"
 
+    if (carpeta_exists.exists()) or (file_exists.is_file()):
+        repeat = True
+
+    del carpeta_exists, file_exists
+        
     return files_and_foldes_not_exist, repeat
 
 
@@ -74,7 +83,7 @@ def obtener_version_servidor_bds(ruta):
         process.terminate()
         process.wait(timeout=2)
 
-        cache_BDS = Path(__file__).parent.parent / "Dedicated_Server.txt"
+        cache_BDS = Path(__file__).parent.parent.parent / "Dedicated_Server.txt"
         if (cache_BDS.is_file()):
             cache_BDS.unlink()
 

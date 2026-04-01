@@ -1,8 +1,11 @@
 import sys
 import argparse
 
-from core.controller import controller_functions_bclt
+from core.controller import Controller_Functions_Bclt
 from visualt.aesthetics import imprimir_logo, imprimir_recuadro_version
+
+
+CONTROLLER_FUNCTIONS_BCLT = Controller_Functions_Bclt()
 
 
 
@@ -39,18 +42,17 @@ if (args.version):
     sys.exit(0)
 
 elif (args.comando_principal == "spaces"):
-    functions = args.accionSpaces
+    accion = args.accionSpaces
 
-    if (functions == "remove"):
-        func = { "func": functions, "complements": args.nameforemove }
-    
-    elif (functions == "edit"):
-        func = { "func": functions, "complements": args.nameforedit }
+    if (accion == "create"):
+        CONTROLLER_FUNCTIONS_BCLT.create()
 
-    else:
-        func = { "func": functions, "complements": None }
+    elif (accion == "list"):
+        CONTROLLER_FUNCTIONS_BCLT.lists()
 
-    del functions
-    controller_functions_bclt(func)
+    elif (accion == "remove"):
+        CONTROLLER_FUNCTIONS_BCLT.remove(args.nameforemove)
+
+    del accion
 else:
     Cli_Parser.print_help()

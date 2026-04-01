@@ -4,6 +4,7 @@ import json
 import hashlib
 import requests
 from pathlib import Path
+from functools import lru_cache
 
 from visualt.prints import exception_error, print_information
 
@@ -56,8 +57,9 @@ def aux_fileController__connectFileGithub():
 
 
 
+@lru_cache(maxsize=1)
 def load_fileController():
-    NOT_USER = True 
+    NOT_USER = False
     ruta_at_config_file = Path(__file__).parent / "file_controller.json"
 
     if (not ruta_at_config_file.is_file()):
@@ -96,7 +98,7 @@ class Return_Content_Config:
         self._data_json = load_fileController()
         
         self.data_information = self._data_json.get("information")
-        self.data_ruts = self-self._data_json.get("ruts")
+        self.data_ruts = self._data_json.get("ruts")
 
     @property
     def get_name(self):
@@ -114,14 +116,14 @@ class Return_Content_Config:
     def get_author(self):
         return self.data_information.get("Developer")
     
-    @property
+
     def return_list_logos(self):
         return self.data_information.get("logos", {})
     
 
     def return_list_filesfolders(self):
         content = self._data_json.get("resources-modules").get("check_BDS")
-        return (content.get("files", []) + content.get("folders", []))
+        return (content.get("files", [])) + (content.get("folders", []))
     
     @property
     def get_ruts_configuracion(self):

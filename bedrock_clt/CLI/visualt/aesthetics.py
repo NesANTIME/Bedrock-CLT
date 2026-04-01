@@ -4,23 +4,28 @@ init(autoreset=True)
 
 from config.load_config import Return_Content_Config
 
+LOAD_CONFIG = Return_Content_Config()
+
+
+
 # Animaciones en pantalla ~~~
 def imprimir_logo():
-    logo_aleatorio = random.choice(list(Return_Content_Config.return_list_logos.keys()))
+    lista_logotipos = LOAD_CONFIG.return_list_logos()
+    logo_aleatorio = random.choice(list(lista_logotipos.keys()))
 
     for i in lista_logotipos.get(logo_aleatorio):
         print(f"{Style.BRIGHT}{i}")
     
-    print(f"{' '*20}{Style.DIM}by Nesantime {Style.NORMAL}---{Style.DIM} Version: {Return_Content_Config.get_version}{Style.RESET_ALL}")
+    print(f"{' '*20}{Style.DIM}by Nesantime {Style.NORMAL}---{Style.DIM} Version: {LOAD_CONFIG.get_version}{Style.RESET_ALL}")
     
     del logo_aleatorio, lista_logotipos
 
 
 def imprimir_recuadro_version():
-    name = Return_Content_Config.get_name
-    author = Return_Content_Config.get_author
-    version = f"v{Return_Content_Config.get_version}"
-    repository = Return_Content_Config.get_repository
+    name = LOAD_CONFIG.get_name
+    author = LOAD_CONFIG.get_author
+    version = f"v{LOAD_CONFIG.get_version}"
+    repository = LOAD_CONFIG.get_repository
 
     print(f"\n╭{'─'*68}╮")
     print(f"│• {Style.BRIGHT}Code_Proyect{' '*8}:  {Style.RESET_ALL}{name}{' '*(43 - len(name))}│")
