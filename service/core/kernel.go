@@ -48,7 +48,6 @@ func main() {
 	}
 
 	fmt.Println("[B-CLT] ¡Servidor iniciado con éxito!")
-	fmt.Println(Configuration.Path_server)
 
 	go channel.Connection_Sock(channel_connection, Configuration.Path_sock)
 

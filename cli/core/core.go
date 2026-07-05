@@ -1,59 +1,27 @@
 package core
 
 import (
-	"fmt"
-	"log"
-
-	"github.com/coreos/go-systemd/v22/sdjournal"
+	"bedrock-clt_cli/app"
+	"bedrock-clt_cli/core/channel"
+	"bedrock-clt_cli/core/logger"
+	"path/filepath"
 )
 
-func Capture_Logs(LogChan chan string) {
-	j, err := sdjournal.NewJournal()
-	if err != nil {
-		log.Fatalf("Error abriendo la API de journald: %v", err)
-	}
-	defer j.Close()
+func Core_TUI() {
+	Path_Sock := filepath.Join("/home", "nesantime", "Pruebas", "bedrock-clt_sock.sock")
 
-	serviceName := "bedrock-clt_process_BDS"
-	match := "SYSLOG_IDENTIFIER=bedrock-clt_process_BDS"
+	Log_Channel := make(chan string)
+	StatusServer_Channel := make(chan app.SystemStatus)
+	CmdUser_Channel := make(chan string)
 
-	if err := j.AddMatch(match); err != nil {
-		log.Fatalf("Error añadiendo filtro: %v", err)
-	}
+	// Listener Logs
+	go logger.Logger_Capt("SYSLOG_IDENTIFIER=bedrock-clt_process_BDS", Log_Channel)
 
-	if err := j.SeekTail(); err != nil {
-		log.Fatalf("Error buscando el final del journal: %v", err)
-	}
+	// Send Command
+	go channel.ConnectSock(Path_Sock, CmdUser_Channel)
 
-	if _, err := j.Previous(); err != nil {
-		log.Fatalf("Error posicionando el cursor: %v", err)
-	}
+	// Status System
 
-	fmt.Printf("Monitoreando %s de forma nativa. Esperando nuevos logs...\n", serviceName)
-	fmt.Println("---------------------------------------------------")
-
-	for {
-		c, err := j.Next()
-		if err != nil {
-			log.Fatalf("Error leyendo el siguiente log: %v", err)
-		}
-
-		if c == 0 {
-			j.Wait(sdjournal.IndefiniteWait)
-			continue
-		}
-
-		entry, err := j.GetEntry()
-		if err != nil {
-			log.Printf("Error decodificando la entrada: %v", err)
-			continue
-		}
-
-		msg, hasMsg := entry.Fields["MESSAGE"]
-		if !hasMsg {
-			continue
-		}
-
-		LogChan <- fmt.Sprintf("%s\n", msg)
-	}
+	// TUI
+	app.Launch_App(Log_Channel, StatusServer_Channel, CmdUser_Channel)
 }
