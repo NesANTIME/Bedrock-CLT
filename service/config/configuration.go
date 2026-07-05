@@ -11,11 +11,13 @@ import (
 type Configuration_App struct {
 	Path_server    string
 	Launch_command []string
+	Path_sock      string
 }
 
 func Load_Configuration() (Configuration_App, error) {
-	Path_Configuration_App := filepath.Join("/home", "nesantime", "Proyectos-Profesionales", "Bedrock-CLT", "service", "config.toml")
-	Path_Configuration_Server := filepath.Join("/home", "nesantime", "Proyectos-Profesionales", "Bedrock-CLT", "service", "configuration.json")
+	Path_Configuration_App := filepath.Join("/home", "nesantime", "Pruebas", "config.toml")
+	Path_Sock := filepath.Join("/home", "nesantime", "Pruebas", "bedrock-clt_sock.sock")
+	Path_Configuration_Server := filepath.Join("/home", "nesantime", "Pruebas", "configuration.json")
 
 	Config_App, Config_Server, err := readerconfig.Reader_Configuration_Files(Path_Configuration_App, Path_Configuration_Server)
 	if err != nil {
@@ -36,5 +38,6 @@ func Load_Configuration() (Configuration_App, error) {
 	return Configuration_App{
 		Path_server:    Config_Server.Configuration_server.Path,
 		Launch_command: launch_command,
+		Path_sock:      Path_Sock,
 	}, nil
 }
